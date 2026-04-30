@@ -1,0 +1,3 @@
+pyecotrend-ista
+psycopg[binary]
+python-dotenv
