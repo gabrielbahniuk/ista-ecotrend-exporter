@@ -9,6 +9,9 @@ from typing import Any
 def _to_float(value: Any) -> float | None:
     if value is None:
         return None
+    # bool is a subclass of int in Python and should never be treated as a measurement
+    if isinstance(value, bool):
+        return None
     if isinstance(value, (int, float)):
         return float(value)
     if isinstance(value, str):
@@ -46,7 +49,17 @@ def _iter_measurements(consumption: Any) -> list[tuple[str, Any]]:
     if isinstance(consumption, list):
         return [(f"item_{idx}", value) for idx, value in enumerate(consumption)]
     if isinstance(consumption, dict):
-        return list(consumption.items())
+        measurements: list[tuple[str, Any]] = []
+        for key, value in consumption.items():
+            # Skip flags and empty values from the provider payload
+            if value is None or isinstance(value, bool):
+                continue
+            # Expand nested lists/dicts because useful readings are often nested
+            if isinstance(value, list):
+                measurements.extend((f"{key}_{idx}", entry) for idx, entry in enumerate(value))
+                continue
+            measurements.append((key, value))
+        return measurements
     return [("value", consumption)]
 
 
@@ -62,7 +75,16 @@ def normalize(payload: dict[str, Any], source: str = "ista") -> list[dict[str, A
         for key, raw_item in _iter_measurements(consumption):
             value = None
             if isinstance(raw_item, dict):
-                for candidate in ("value", "consumption", "amount", "reading"):
+                for candidate in (
+                    "value",
+                    "consumption",
+                    "amount",
+                    "reading",
+                    "current_value",
+                    "currentValue",
+                    "reading_value",
+                    "readingValue",
+                ):
                     if candidate in raw_item:
                         value = _to_float(raw_item.get(candidate))
                         if value is not None:
@@ -74,8 +96,21 @@ def normalize(payload: dict[str, Any], source: str = "ista") -> list[dict[str, A
 
             metric = _guess_metric(key, raw_item)
             unit = _guess_unit(raw_item)
-            period_start = raw_item.get("period_start") if isinstance(raw_item, dict) else None
-            period_end = raw_item.get("period_end") if isinstance(raw_item, dict) else None
+            period_start = None
+            period_end = None
+            if isinstance(raw_item, dict):
+                period_start = (
+                    raw_item.get("period_start")
+                    or raw_item.get("periodStart")
+                    or raw_item.get("start")
+                    or raw_item.get("from")
+                )
+                period_end = (
+                    raw_item.get("period_end")
+                    or raw_item.get("periodEnd")
+                    or raw_item.get("end")
+                    or raw_item.get("to")
+                )
             meter_name = None
             if isinstance(details, dict):
                 meter_name = details.get("name") or details.get("meter_name")

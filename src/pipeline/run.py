@@ -12,6 +12,7 @@ from src.pipeline.normalize import normalize
 def main() -> None:
     load_dotenv()
     source = os.getenv("PIPELINE_SOURCE", "ista")
+    debug_enabled = os.getenv("PIPELINE_DEBUG", "false").lower() in {"1", "true", "yes"}
 
     payload = extract_from_ista()
     records = normalize(payload, source=source)
@@ -20,6 +21,17 @@ def main() -> None:
     unknown_unit = sum(1 for r in records if r.get("unit") == "unknown")
     missing_period_end = sum(1 for r in records if not r.get("period_end"))
     sample = records[0] if records else None
+
+    if debug_enabled:
+        sample_payload = sample.get("raw_payload") if sample else None
+        print(
+            "Normalize diagnostics:",
+            {
+                "records_generated": len(records),
+                "sample_raw_payload_type": type(sample_payload).__name__ if sample_payload is not None else None,
+                "sample_raw_payload": sample_payload,
+            },
+        )
 
     print(
         "Pipeline completed:",
