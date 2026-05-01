@@ -14,6 +14,15 @@
 
 Fetches data from your **ISTA EcoTrend** account, normalizes it, and generates Markdown reports (**`REPORT.md`** as an index plus **`REPORT_YYYY.md`** per year) and SVG charts under **`assets/charts/`**. No database or data collection. Everything stays under your control in the repository files. A **private fork** is recommended. Consumption and costs end up in git history.
 
+
+## Why
+
+Stop hunting numbers in the EcoTrend UI. Get consumption + costs as **Markdown + charts** in **your private** repo instead.
+
+- **3 minutes to wire up**, then it can run quietly every month without you babysitting exports.
+- **Year-over-year at a glance.** Tables and charts you actually want to scroll.
+
+
 ---
 
 ## Quick start
@@ -53,22 +62,15 @@ TODO tutorial and examples....
 **A good fit if you:**
 
 - Check ISTA EcoTrend often (e.g. after the monthly email).
-- Like a year-over-year view (tables + SVG charts) without running your own database or paid dashboard.
-- Are OK maintaining your private fork + GitHub Secrets instead of handing data to a random 3rd party SaaS.
-- Think it's not a big deal in case ISTA change their data model and the app breaks.
-- Want to contribute in any form: giving feedback, requesting feature, fix or even contributing to the main repository yourself.
+- Like a year-over-year view with fancy charts and tables, without maintainance costs.
+- Will not be deeply sad if ISTA changes their API and the app breaks. (We can always fix it though)
+- Want to contribute in any form. 
 
 **Probably not worth it if you:**
 
 - Open the EcoTrend app once or twice a year.
 - Do not want to touch GitHub (forks, Actions, secrets) at all.
-- Need an official or guaranteed access, since this uses an **unofficial client** (see disclaimer below).
-
----
-
-## Why?
-
-Mainly for people who want to know about how their monthly warm water and heating costs play a role in their year consumption. Or just for curiosity.
+- Need an official or guaranteed access. 
 
 ---
 
@@ -76,7 +78,7 @@ Mainly for people who want to know about how their monthly warm water and heatin
 
 - **ISTA unofficial API risk:** data is fetched with the unofficial library **`pyecotrend-ista`** ([upstream](https://github.com/Ludy87/pyecotrend-ista); pinned via git in [`requirements.txt`](requirements.txt)). ISTA may change endpoints or terms. **Use at your own risk.**
 
-- **Not** a commercial app, hosted DB, realtime dashboard, or official ISTA product — just automation that commits reports **into git** in **your fork**.
+- **Not** a commercial app, hosted DB, realtime dashboard, or official ISTA product — just automation that commits reports **into git** in **your private fork**.
 
 - **Secrets** (`ISTA_EMAIL` / `ISTA_PASSWORD`) live in GitHub — **never** screenshot the values.
 
