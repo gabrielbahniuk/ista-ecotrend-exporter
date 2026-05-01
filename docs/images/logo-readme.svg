@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 104" fill="none" role="img" aria-label="Cartoon face wearing glasses made from two euro coins">
+  <title>Euro goggles buddy</title>
+  <!-- Face (behind the coin-glasses) -->
+  <ellipse
+    cx="80"
+    cy="58"
+    rx="46"
+    ry="42"
+    fill="#fcd9bf"
+    stroke="#78350f"
+    stroke-width="2.5"
+  />
+  <!-- Cheeks -->
+  <circle cx="52" cy="62" r="8" fill="#f9a8a8" opacity="0.65" />
+  <circle cx="108" cy="62" r="8" fill="#f9a8a8" opacity="0.65" />
+  <!-- Smile -->
+  <path
+    d="M58 70 Q80 84 102 70"
+    stroke="#78350f"
+    stroke-width="2.3"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <!-- Temple arms -->
+  <path
+    d="M24 43 L31 43"
+    stroke="#78350f"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+  <path
+    d="M136 43 L129 43"
+    stroke="#78350f"
+    stroke-width="2"
+    stroke-linecap="round"
+  />
+  <!-- Bridge between coin-lenses (between inner rims) -->
+  <path d="M74 43 H86" stroke="#92400e" stroke-width="2.8" stroke-linecap="round" />
+  <!-- Left coin lens -->
+  <circle cx="53" cy="43" r="21" stroke="#92400e" stroke-width="2.4" fill="#fde68a" />
+  <circle cx="53" cy="43" r="18" stroke="#fbbf24" stroke-width="1" opacity="0.5" fill="none" />
+  <!-- Right coin lens -->
+  <circle cx="107" cy="43" r="21" stroke="#92400e" stroke-width="2.4" fill="#fde68a" />
+  <circle cx="107" cy="43" r="18" stroke="#fbbf24" stroke-width="1" opacity="0.5" fill="none" />
+  <!-- € on each lens -->
+  <text
+    x="53"
+    y="49"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="21"
+    font-weight="700"
+    fill="#78350f"
+  >
+    €
+  </text>
+  <text
+    x="107"
+    y="49"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+    font-size="21"
+    font-weight="700"
+    fill="#78350f"
+  >
+    €
+  </text>
+  <!-- Shine on lenses -->
+  <ellipse cx="45" cy="36" rx="4" ry="2.8" fill="#fffbeb" opacity="0.92" />
+  <ellipse cx="98" cy="36" rx="4" ry="2.8" fill="#fffbeb" opacity="0.92" />
+</svg>

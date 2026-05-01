@@ -6,8 +6,10 @@ from calendar import monthrange
 from datetime import UTC, datetime
 from typing import Any
 
+from src.pipeline.schemas import NormalizedRecord
 
-def _to_float(value: Any) -> float | None:
+
+def _to_float(value: object) -> float | None:
     if value is None:
         return None
     # bool is a subclass of int in Python and should never be treated as a measurement
@@ -24,7 +26,7 @@ def _to_float(value: Any) -> float | None:
     return None
 
 
-def _find_first_numeric(value: Any) -> float | None:
+def _find_first_numeric(value: object) -> float | None:
     if isinstance(value, dict):
         preferred_keys = (
             "value",
@@ -58,7 +60,7 @@ def _find_first_numeric(value: Any) -> float | None:
     return _to_float(value)
 
 
-def _map_metric(raw_type: Any) -> str:
+def _map_metric(raw_type: object) -> str:
     text = str(raw_type or "").strip().lower()
     if text == "warmwater":
         return "hot_water"
@@ -67,14 +69,14 @@ def _map_metric(raw_type: Any) -> str:
     return "unknown"
 
 
-def _map_cost_metric(raw_type: Any) -> str:
+def _map_cost_metric(raw_type: object) -> str:
     base = _map_metric(raw_type)
     if base == "unknown":
         return base
     return f"{base}_cost"
 
 
-def _normalize_unit(unit: Any) -> str:
+def _normalize_unit(unit: object) -> str:
     text = str(unit or "").strip()
     if not text:
         return "unknown"
@@ -88,7 +90,7 @@ def _normalize_unit(unit: Any) -> str:
     return text
 
 
-def _period_end_from_date_block(value: Any) -> str | None:
+def _period_end_from_date_block(value: object) -> str | None:
     if not isinstance(value, dict):
         return None
     month = value.get("month")
@@ -101,7 +103,7 @@ def _period_end_from_date_block(value: Any) -> str | None:
     return datetime(year, month, last_day, 23, 59, 59, tzinfo=UTC).isoformat()
 
 
-def _guess_metric(key: str, item: Any) -> str:
+def _guess_metric(key: str, item: object) -> str:
     text = f"{key} {json.dumps(item, ensure_ascii=True)}".lower()
     if "water" in text and "hot" in text:
         return "hot_water"
@@ -112,7 +114,7 @@ def _guess_metric(key: str, item: Any) -> str:
     return "unknown"
 
 
-def _guess_unit(item: Any) -> str:
+def _guess_unit(item: object) -> str:
     text = json.dumps(item, ensure_ascii=True).lower()
     if "kwh" in text:
         return "kWh"
@@ -123,11 +125,11 @@ def _guess_unit(item: Any) -> str:
     return "unknown"
 
 
-def _iter_measurements(consumption: Any) -> list[tuple[str, Any]]:
+def _iter_measurements(consumption: object) -> list[tuple[str, object]]:
     if isinstance(consumption, list):
         return [(f"item_{idx}", value) for idx, value in enumerate(consumption)]
     if isinstance(consumption, dict):
-        measurements: list[tuple[str, Any]] = []
+        measurements: list[tuple[str, object]] = []
         for key, value in consumption.items():
             # Skip flags and empty values from the provider payload
             if value is None or isinstance(value, bool):
@@ -141,12 +143,17 @@ def _iter_measurements(consumption: Any) -> list[tuple[str, Any]]:
     return [("value", consumption)]
 
 
-def normalize(payload: dict[str, Any], source: str = "ista") -> list[dict[str, Any]]:
-    records: list[dict[str, Any]] = []
+def normalize(payload: dict[str, Any], source: str = "ista") -> list[NormalizedRecord]:
+    records: list[NormalizedRecord] = []
     now = datetime.now(UTC)
 
-    items = payload.get("items", {})
+    items_any = payload.get("items", {})
+    if not isinstance(items_any, dict):
+        return records
+    items: dict[str, Any] = items_any
     for unit_uuid, unit_payload in items.items():
+        if not isinstance(unit_payload, dict):
+            continue
         details = unit_payload.get("details")
         consumption = unit_payload.get("consumption")
         meter_name = None

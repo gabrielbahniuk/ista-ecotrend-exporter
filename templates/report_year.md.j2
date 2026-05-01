@@ -1,0 +1,27 @@
+# ISTA EcoTrend {{ year }}
+
+_Last generated: {{ generated_at }}. Auto-generated._
+
+[README](README.md) · [All years](REPORT.md)
+
+{% if section.figures %}
+## Charts
+
+{% for fig in section.figures %}
+### {{ fig.title }}
+
+![{{ fig.title }}]({{ fig.path }})
+
+{% endfor %}
+{% endif %}
+
+{% if section.usage_rows %}
+## Consumption & costs
+
+| Month | Metric | Consumption | Unit | Cost in € |
+|---:|---|---:|---|---:|
+{% for row in section.usage_rows %}
+| {{ row.month }} | {{ row.metric_label }} | {{ row.consumption_value if row.consumption_value is not none else "—" }} | {{ row.consumption_unit if row.consumption_unit is not none else "—" }} | {{ row.cost_value if row.cost_value is not none else "—" }} |
+{% endfor %}
+
+{% endif %}

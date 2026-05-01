@@ -1,86 +1,149 @@
-# ista-pipeline
+<div align="center">
 
-Private, low-cost pipeline to extract data from ISTA, normalize it, and load it into Postgres for Grafana dashboards.
+<img src="docs/images/logo-readme.svg" alt="Cartoon character wearing sunglasses made from two euro coins." width="100" height="65" />
 
-## Architecture
+# ISTA la vasta, baby
 
-- **Extract**: `pyecotrend-ista` client
-- **Transform**: normalize records into a canonical table shape
-- **Load**: upsert into Postgres with idempotency
-- **Schedule**: GitHub Actions cron or local execution
+[![Generate ISTA report](https://img.shields.io/badge/GitHub_Actions-Generate_report-2088FF?logo=githubactions&logoColor=white)](https://github.com/gabrielbahniuk/ista-pipeline/actions/workflows/report.yml)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+</div>
+
+## What
+
+Fetches data from your **ISTA EcoTrend** account, normalizes it, and generates Markdown reports (**`REPORT.md`** as an index plus **`REPORT_YYYY.md`** per year) and SVG charts under **`assets/charts/`**. No database or data collection. Everything stays under your control in the repository files. A **private fork** is recommended. Consumption and costs end up in git history.
+
+---
 
 ## Quick start
 
-### 1) Create virtualenv
+You do not need Python or a terminal on your machine — only **GitHub** and **ISTA**.
+
+### Step by step
+
+1. **Fork this repository** (preferably **private**, so only you can see reports with your real data).
+2. In your fork, open **Settings** → **Secrets and variables** → **Actions**.
+3. Click **New repository secret** and add two secrets (names must match exactly):
+
+   | Name               | Value                                       |
+   |--------------------|---------------------------------------------|
+   | `ISTA_EMAIL`       | your ISTA EcoTrend account email            |
+   | `ISTA_PASSWORD`    | that account’s password                     |
+
+4. Make sure **GitHub Actions** is enabled on the fork: **Settings** → **Actions** → **General** → allow workflows to run (forks sometimes have Actions restricted by default).
+5. Open the **Actions** tab, select the **Generate ISTA report** workflow.
+6. Click **Run workflow** → choose your default branch (often `main`) → **Run workflow**.
+
+When it finishes successfully, the repo will show updated **`REPORT.md`** (year index), **`REPORT_2026.md`** (and other years as data allows), and **`assets/charts/`**. Open the `.md` files right on GitHub.
+
+### Or just wait for the schedule
+
+The same workflow runs automatically on the **18th of every month at 06:00 UTC**. Change the time in [.github/workflows/report.yml](.github/workflows/report.yml) if needed.
+Why on this date? Normally ISTA sends out the monthly consumption email between 13th and 16th.
+
+---
+
+## How it looks like?
+
+TODO tutorial and examples....
+
+## Who this is for
+
+**A good fit if you:**
+
+- Check ISTA EcoTrend often (e.g. after the monthly email).
+- Like a year-over-year view (tables + SVG charts) without running your own database or paid dashboard.
+- Are OK maintaining your private fork + GitHub Secrets instead of handing data to a random 3rd party SaaS.
+- Think it's not a big deal in case ISTA change their data model and the app breaks.
+- Want to contribute in any form: giving feedback, requesting feature, fix or even contributing to the main repository yourself.
+
+**Probably not worth it if you:**
+
+- Open the EcoTrend app once or twice a year.
+- Do not want to touch GitHub (forks, Actions, secrets) at all.
+- Need an official or guaranteed access, since this uses an **unofficial client** (see disclaimer below).
+
+---
+
+## Why?
+
+Mainly for people who want to know about how their monthly warm water and heating costs play a role in their year consumption. Or just for curiosity.
+
+---
+
+## Disclaimer & scope
+
+- **ISTA unofficial API risk:** data is fetched with the unofficial library **`pyecotrend-ista`** ([upstream](https://github.com/Ludy87/pyecotrend-ista); pinned via git in [`requirements.txt`](requirements.txt)). ISTA may change endpoints or terms. **Use at your own risk.**
+
+- **Not** a commercial app, hosted DB, realtime dashboard, or official ISTA product — just automation that commits reports **into git** in **your fork**.
+
+- **Secrets** (`ISTA_EMAIL` / `ISTA_PASSWORD`) live in GitHub — **never** screenshot the values.
+
+---
+
+## How it works (short)
+
+- **Extract**: `pyecotrend-ista` client  
+- **Transform**: `normalize()`  
+- **Report**: `python -m src.pipeline.report` (on GitHub Actions runners)  
+- **CI**: [.github/workflows/report.yml](.github/workflows/report.yml) — monthly cron (18th, 06:00 UTC) plus **Run workflow** anytime  
+
+---
+
+## Local development (optional)
+
+To generate reports on your computer:
+
+### 1) Virtualenv and dependencies
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 python -m pip install -U pip
-```
-
-### 2) Install dependencies
-
-```bash
 python -m pip install -r requirements.txt
 ```
 
-### 3) Configure environment
+### 2) Environment variables
 
 ```bash
 cp .env.example .env
-# Fill values in .env
-set -a; source .env; set +a
+# edit .env — set ISTA_EMAIL and ISTA_PASSWORD
+set -a && source .env && set +a
 ```
 
-### 4) Run schema migration
+### 3) Generate the report
 
 ```bash
-python -m src.pipeline.init_db
+python -m src.pipeline.report
 ```
 
-### 5) Run pipeline
+Open `REPORT.md` and `REPORT_YYYY.md`; charts live in `assets/charts/`.
+
+Offline using a JSON shaped like `ista_dump` (`{ "<uuid>": { "consumption": … } }`):
 
 ```bash
-python -m src.pipeline.run
+REPORT_FIXTURE_JSON=/path/to/dump.json python -m src.pipeline.report
 ```
 
-## Environment variables
+### Tests
 
-- `ISTA_EMAIL`: ISTA account email
-- `ISTA_PASSWORD`: ISTA account password
-- `DATABASE_URL`: PostgreSQL DSN, including `sslmode=require` for hosted DBs
+```bash
+python -m pytest -q
+```
 
-Optional:
+## Environment variables (local only)
 
-- `PIPELINE_SOURCE`: defaults to `ista`
-- `PIPELINE_TIMEZONE`: defaults to `UTC`
+| Variable | Purpose |
+|----------|---------|
+| `ISTA_EMAIL`, `ISTA_PASSWORD` | ISTA login (live API fetch) |
+| `PIPELINE_SOURCE` | defaults to `ista` |
+| `PIPELINE_TIMEZONE` | defaults to `UTC` |
+| `PIPELINE_DEBUG` | set `true` for extra extract diagnostics |
+| `REPORT_FIXTURE_JSON` | path to offline JSON instead of the API |
 
-## Data model
+## Security
 
-The pipeline writes to table `consumption_records` with:
-
-- identifiers (`unit_uuid`, `meter_name`, `metric`)
-- time fields (`period_start`, `period_end`, `collected_at`)
-- values (`value`, `unit`)
-- idempotency key (`fingerprint`, unique)
-- `raw_payload` for traceability/debugging
-
-## GitHub Actions
-
-Workflow file: `.github/workflows/daily.yml`
-
-- Manual run: `workflow_dispatch`
-- Scheduled run: once daily (UTC)
-
-Required repository secrets:
-
-- `ISTA_EMAIL`
-- `ISTA_PASSWORD`
-- `DATABASE_URL`
-
-## Security notes
-
-- Never commit `.env` or credentials.
-- Rotate credentials if exposed.
-- Keep DB user scoped to least privilege needed.
+- Never commit **`/.env`** or credentials in tracked source files.
+- Rotate your ISTA password immediatelz if it was ever exposed.
+- After forking, make sure you use a **private** repository, so that your private consumption data is kept private to you :)

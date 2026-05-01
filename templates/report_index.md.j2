@@ -1,0 +1,24 @@
+# ISTA EcoTrend reports
+
+_Index generated {{ generated_at }}. Per-year reports are linked below._
+
+[README](README.md)
+
+## By year
+
+{% for y in years %}
+- [Report {{ y }}](REPORT_{{ y }}.md)
+{% endfor %}
+
+## Recent entries (all years)
+
+<details>
+<summary>Last {{ summary_recent | length }} data points</summary>
+
+| Year | Month | Metric | Value | Unit |
+|---:|---:|---|---:|---|
+{% for row in summary_recent %}
+| {{ row.year }} | {{ row.month }} | {{ row.metric_label }} | {{ row.value }} | {{ row.unit }} |
+{% endfor %}
+
+</details>

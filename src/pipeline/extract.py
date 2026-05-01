@@ -7,15 +7,15 @@ from typing import Any
 from pyecotrend_ista import PyEcotrendIsta
 
 
-def _safe_keys(value: Any) -> list[str]:
+def _safe_keys(value: object) -> list[str]:
     if isinstance(value, dict):
         return sorted(str(k) for k in value.keys())[:20]
     return []
 
 
-def _preview(value: Any, max_items: int = 3) -> Any:
+def _preview(value: object, max_items: int = 3) -> object:
     if isinstance(value, dict):
-        preview: dict[str, Any] = {}
+        preview: dict[str, str] = {}
         for idx, (k, v) in enumerate(value.items()):
             if idx >= max_items:
                 break
@@ -26,7 +26,7 @@ def _preview(value: Any, max_items: int = 3) -> Any:
     return value
 
 
-def _first(items: Iterable[Any]) -> Any | None:
+def _first(items: Iterable[str]) -> str | None:
     for item in items:
         return item
     return None
