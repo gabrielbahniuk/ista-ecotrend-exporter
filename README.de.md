@@ -16,7 +16,7 @@
 
 Einordnung der finanziellen Auswirkungen deines Heiz- und Warmwasserverhaltens über das Jahr, mit Daten aus der ISTA EcoTrend App.
 
-![Demo: Einrichtung und Reports ansehen](docs/demo.gif)
+![Demo: Einrichtung und Reports ansehen](docs/report-demo.gif)
 
 ## Warum
 

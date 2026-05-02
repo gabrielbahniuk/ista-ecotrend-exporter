@@ -16,7 +16,7 @@
 
 Understanding the financial impact of your yearly heating & showering behaviour, using data from ISTA EcoTrend.
 
-![Demo: setup and viewing reports](docs/demo.gif)
+![Demo: setup and viewing reports](docs/report-demo.gif)
 
 ## Why
 
