@@ -4,6 +4,24 @@ _Last generated: {{ generated_at }}. Auto-generated._
 
 [README](README.md) · [All years](REPORT.md)
 
+{% if usage_notes %}
+<details open>
+<summary>⚠️ <strong>Anomaly notes</strong> · {{ usage_notes | length }}</summary>
+
+{% for note in usage_notes %}
+{% if not loop.first %}
+
+---
+
+{% endif %}
+> **{{ note.month_short }} · {{ note.metric_label }}**
+>
+> {{ note.message }}
+
+{% endfor %}
+</details>
+
+{% endif %}
 {% if section.figures %}
 ## Charts
 

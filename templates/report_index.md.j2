@@ -4,6 +4,17 @@ _Index generated {{ generated_at }}. Per-year reports are linked below._
 
 <a href="exports/ista_usage_all.csv"><img src="docs/images/csv-report.svg" width="28" height="28" alt="" style="vertical-align: middle;"> <strong>CSV Report</strong></a> · [README](README.md)
 
+{% if years_with_usage_notes %}
+<details open>
+<summary><strong>⚠️ Anomaly detected: Billed vs. Used</strong></summary>
+
+{% for y in years_with_usage_notes %}
+- [Report {{ y }}](REPORT_{{ y }}.md)
+{% endfor %}
+
+</details>
+
+{% endif %}
 ## By year
 
 {% for y in years %}

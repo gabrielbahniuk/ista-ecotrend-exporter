@@ -45,3 +45,39 @@ def test_render_index_lists_years_and_summary():
     assert "CSV Report" in md and "docs/images/csv-report.svg" in md
     assert "## By year" in md
     assert "## Recent entries" in md
+
+
+def test_render_year_shows_cost_note_when_heating_sparse():
+    repo_root = Path(__file__).resolve().parents[1]
+    records = enrich_records(
+        [
+            {"period_end": "2025-12-31T23:59:59+00:00", "metric": "heating", "value": 1.0, "unit": "kWh"},
+            {"period_end": "2025-12-31T23:59:59+00:00", "metric": "heating_cost", "value": 140.0, "unit": "EUR"},
+        ]
+    )
+    sections = build_sections(records, chart_paths={})
+    ctx = build_year_file_context(sections[0], "2099-01-01 00:00:00 UTC")
+    md = render_year_report_markdown(repo_root, ctx)
+
+    assert "⚠️ <strong>Anomaly notes</strong> · 1" in md
+    assert "Months below often reflect" not in md
+    assert "**Dec · Heating**" in md
+
+
+def test_render_index_shows_banner_when_flags_present():
+    repo_root = Path(__file__).resolve().parents[1]
+    records = enrich_records(
+        [{"period_end": "2025-06-30T23:59:59+00:00", "metric": "heating", "value": 1.0, "unit": "kWh"}]
+    )
+    md = render_index_markdown(
+        repo_root,
+        build_index_context(
+            records,
+            years=[2025],
+            generated_at="2099-01-01 00:00:00 UTC",
+            years_with_usage_notes=[2025],
+        ),
+    )
+
+    assert "Anomaly detected: Billed vs. Used" in md
+    assert "[Report 2025](REPORT_2025.md)" in md

@@ -52,6 +52,13 @@ class YearSection(TypedDict):
     usage_rows: list[UsageTableRow]
 
 
+class UsageNote(TypedDict):
+    month: int
+    month_short: str
+    metric_label: str
+    message: str
+
+
 class SummaryRow(TypedDict):
     year: int
     month: int
@@ -64,9 +71,11 @@ class ReportIndexContext(TypedDict):
     generated_at: str
     years: list[int]
     summary_recent: list[SummaryRow]
+    years_with_usage_notes: list[int]
 
 
 class YearReportContext(TypedDict):
     generated_at: str
     year: int
     section: YearSection
+    usage_notes: list[UsageNote]

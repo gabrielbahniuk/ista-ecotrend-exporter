@@ -13,6 +13,7 @@ from src.pipeline.normalize import normalize
 from src.pipeline.report_charts import generate_chart_assets
 from src.pipeline.report_data import build_sections, enrich_records
 from src.pipeline.report_csv import combined_usage_csv_path, write_all_usage_csv
+from src.pipeline.report_notes import build_usage_notes
 from src.pipeline.report_render import (
     build_index_context,
     build_year_file_context,
@@ -68,17 +69,28 @@ def main() -> int:
 
     write_all_usage_csv(sections_all, combined_usage_csv_path(root))
 
+    usage_notes_by_year = {
+        int(s["year"]): build_usage_notes(s["usage_rows"], int(s["year"])) for s in sections_all
+    }
+    years_with_usage_notes = sorted(
+        (y for y, notes in usage_notes_by_year.items() if notes), reverse=True
+    )
+
     written_years = []
     for year in years:
         section = sections_by_year.get(year)
         if section is None:
             raise RuntimeError(f"No section built for year {year}")
-        ctx_year = build_year_file_context(section, generated_at)
+        ctx_year = build_year_file_context(
+            section, generated_at, usage_notes=usage_notes_by_year[year]
+        )
         year_path = root / f"REPORT_{year}.md"
         year_path.write_text(render_year_report_markdown(root, ctx_year) + "\n", encoding="utf-8")
         written_years.append(year)
 
-    index_ctx = build_index_context(enriched, years, generated_at)
+    index_ctx = build_index_context(
+        enriched, years, generated_at, years_with_usage_notes=years_with_usage_notes
+    )
     (root / "REPORT.md").write_text(render_index_markdown(root, index_ctx) + "\n", encoding="utf-8")
 
     print(

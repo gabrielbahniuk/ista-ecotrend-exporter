@@ -5,7 +5,8 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from src.pipeline.report_data import report_summary_recent
-from src.pipeline.schemas import EnrichedRecord, ReportIndexContext, YearReportContext, YearSection
+from src.pipeline.report_notes import build_usage_notes
+from src.pipeline.schemas import EnrichedRecord, ReportIndexContext, UsageNote, YearReportContext, YearSection
 
 
 def _jinja_env(repo_root: Path) -> Environment:
@@ -27,18 +28,32 @@ def render_year_report_markdown(repo_root: Path, context: YearReportContext) -> 
 
 
 def build_index_context(
-    enriched: list[EnrichedRecord], years: list[int], generated_at: str
+    enriched: list[EnrichedRecord],
+    years: list[int],
+    generated_at: str,
+    *,
+    years_with_usage_notes: list[int] | None = None,
 ) -> ReportIndexContext:
+    ywn = sorted({int(y) for y in (years_with_usage_notes or [])}, reverse=True)
     return {
         "generated_at": generated_at,
         "years": years,
         "summary_recent": report_summary_recent(enriched),
+        "years_with_usage_notes": ywn,
     }
 
 
-def build_year_file_context(section: YearSection, generated_at: str) -> YearReportContext:
+def build_year_file_context(
+    section: YearSection,
+    generated_at: str,
+    *,
+    usage_notes: list[UsageNote] | None = None,
+) -> YearReportContext:
+    yr = int(section["year"])
+    notes = usage_notes if usage_notes is not None else build_usage_notes(section["usage_rows"], yr)
     return {
         "generated_at": generated_at,
-        "year": int(section["year"]),
+        "year": yr,
         "section": section,
+        "usage_notes": notes,
     }
