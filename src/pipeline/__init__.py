@@ -1,1 +1,1 @@
-"""ista-pipeline package."""
+"""ISTA EcoTrend exporter pipeline package."""

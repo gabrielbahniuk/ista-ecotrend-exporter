@@ -6,7 +6,7 @@
 
 # ISTA la vista
 
-[![Generate ISTA report](https://img.shields.io/badge/GitHub_Actions-Generate_report-2088FF?logo=githubactions&logoColor=white)](https://github.com/gabrielbahniuk/ista-pipeline/actions/workflows/report.yml)
+[![Generate ISTA report](https://img.shields.io/badge/GitHub_Actions-Generate_report-2088FF?logo=githubactions&logoColor=white)](https://github.com/gabrielbahniuk/ista-ecotrend-exporter/actions/workflows/report.yml)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
