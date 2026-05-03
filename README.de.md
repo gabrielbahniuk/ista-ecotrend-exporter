@@ -4,102 +4,92 @@
 
 <img src="docs/images/logo-readme.svg" alt="Stilisierte Figur mit Euromünzen als Brille." width="100" height="65" />
 
-# ISTA la vista
+# ISTA EcoTrend Reporter
 
-[![Generate ISTA report](https://img.shields.io/badge/GitHub_Actions-Generate_report-2088FF?logo=githubactions&logoColor=white)](https://github.com/gabrielbahniuk/ista-ecotrend-exporter/actions/workflows/report.yml)
+[![ISTA EcoTrend Reporter](https://img.shields.io/badge/GitHub_Actions-ISTA_EcoTrend_Reporter-2088FF?logo=githubactions&logoColor=white)](https://github.com/gabrielbahniuk/ista-ecotrend-exporter/actions/workflows/report.yml)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 </div>
 
 <!-- ista-report-nav:begin -->
+<h3 align="center"><a href="./generated/reports/REPORT.md">Neuesten Report öffnen →</a></h3>
+<p align="center"><sup>Zuletzt erstellt · 03.05.2026 11:51</sup></p>
 <!-- ista-report-nav:end -->
 
-## Was
-
-Einordnung der finanziellen Auswirkungen deines Heiz- und Warmwasserverhaltens über das Jahr, mit Daten aus der ISTA EcoTrend App.
+Die ISTA-EcoTrend-App fasst Heiz- und Warmwasserverbrauch übers Jahr zusammen. Dieses Template nutzt GitHub Actions für denselben Loginweg wie die App und committet Markdown-Reports, Charts und eine CSV unter `generated/`. Ein privates Repo hält die Daten aus dem öffentlichen Internet.
 
 ![Demo: Einrichtung und Reports ansehen](docs/report-demo.gif)
-
-## Warum
-
-**Nützlich:** Schluss mit dem Zahlen-Suchen in der offiziellen App.
-
-**Schnell:** Minimales Setup. Nur ein ISTA-Konto und ein paar Klicks auf **GitHub**.
-
-**Sicher:** Repository und Daten **privat** halten. Nichts muss nach außen.
 
 ## Schnellstart
 
 1. **Use this template** → **Create a new repository**.
-2. Namen wählen, optional Beschreibung, Sichtbarkeit **private** empfohlen.
-3. Im Repo: **Settings** → **Secrets and variables** → **Actions**.
-4. **New repository secret** — zwei Secrets anlegen (Namen exakt so):
+2. Namen und optional Beschreibung wählen, Sichtbarkeit **Private** empfohlen.
+3. **Settings** → **Secrets and variables** → **Actions**.
+4. Zwei Repository-Secrets anlegen (Namen exakt):
 
-   | Name               | Wert                                        |
-   |--------------------|---------------------------------------------|
-   | `ISTA_EMAIL`       | deine ISTA-EcoTrend-Login-E-Mail            |
-   | `ISTA_PASSWORD`    | das Passwort dieses Kontos                  |
+   | Name | Wert |
+   |------|------|
+   | `ISTA_EMAIL` | deine ISTA-EcoTrend-Login-E-Mail |
+   | `ISTA_PASSWORD` | Passwort dieses Kontos |
 
-5. Tab **Actions** → Workflow **Generate ISTA report**.
-6. **Run workflow** → Branch (idR `main`) → **Run workflow**.
+5. Tab **Actions** → Workflow **ISTA EcoTrend Reporter**.
+6. **Run workflow** → Branch (meist `main`) → **Run workflow**.
 
-Im Repo **`generated/reports/REPORT.md`** öffnen (oder Ordner **`generated/reports/`** durchsuchen) für den Report‑Index.
+Nach dem Push: **`generated/reports/REPORT.md`** auf dem Branch öffnen oder **`generated/reports/`** für Index und Jahresdateien durchsuchen.
 
-### (Optional) einfach warten
+Runs, die du mit **Run workflow** startest, zeigen zusätzlich im **Summary** des Workflow-Laufs einen Direktlink zu `REPORT.md`. **Geplante** Läufe (`schedule`) führen diesen Summary-Schritt nicht aus (`workflow_dispatch`-Bedingung in [.github/workflows/report.yml](.github/workflows/report.yml)); dann Dateibaum oder `REPORT.md` öffnen, oder Workflow anpassen.
 
-Derselbe Workflow läuft automatisch am **18. jedes Monats um 06:00 UTC**. Zeitpunkt in [.github/workflows/report.yml](.github/workflows/report.yml) anzupassen. 
-Warum an dem Tag? ISTA schickt die Verbrauchs-Mail meist zwischen dem **13. und 16.** des Monats.
+### Zeitplan
+
+Derselbe Workflow läuft am **18. jedes Monats um 06:00 UTC**. Cron in [.github/workflows/report.yml](.github/workflows/report.yml) anpassen. Die ISTA-Verbrauchs-Mail kommt oft zwischen dem **13. und 16.**
+
+<details>
+<summary>Optional: Screenshots zur GitHub-Oberfläche (SVG-Platzhalter in <code>docs/tutorial/</code> gegen echte Aufnahmen tauschen)</summary>
+
+**Settings** → **Secrets and variables** → **Actions**:
+
+![Platzhalter: Repository-Secrets](docs/tutorial/readme-tutorial-secrets.svg)
+
+**Actions** → **ISTA EcoTrend Reporter** → **Run workflow**:
+
+![Platzhalter: Run workflow](docs/tutorial/readme-tutorial-run-workflow.svg)
+
+Nach manuellem Run: letzter Lauf → **Summary** (Link zu `REPORT.md` nur bei manuellem Dispatch):
+
+![Platzhalter: Job-Summary mit Link](docs/tutorial/readme-tutorial-summary-link.svg)
+
+</details>
 
 ## Disclaimer
 
-- **Inoffizielle ISTA-API:** Daten kommen über die Bibliothek **`pyecotrend-ista`** ([Upstream](https://github.com/Ludy87/pyecotrend-ista); in [`requirements.txt`](requirements.txt) per Git gepinnt). ISTA kann Schnittstellen oder Bedingungen ändern. **Nutzung auf eigenes Risiko.**
+- Daten über die **inoffizielle** Bibliothek **`pyecotrend-ista`** ([Upstream](https://github.com/Ludy87/pyecotrend-ista); Git-Pin in [`requirements.txt`](requirements.txt)). ISTA kann Schnittstellen oder Bedingungen ändern. Nutzung auf eigenes Risiko.
+- Kein offizielles ISTA-Produkt, keine gehostete Datenbank und kein Echtzeit-Dashboard. Nur Automation, die Reports in dein Repo committet.
+- **`ISTA_EMAIL`** / **`ISTA_PASSWORD`** niemals in Issues oder Screenshots offenlegen.
 
-- **Kein** kommerzielles Produkt, keine gehostete Datenbank, kein Echtzeit-Dashboard und **kein** offizielles ISTA-Angebot — nur Automation, die Reports **in Git** in **deinem privaten Fork** committet.
-
-- **Secrets** (`ISTA_EMAIL` / `ISTA_PASSWORD`) liegen bei GitHub — **niemals** die Werte in Screenshots zeigen.
-
-## Lokal entwickeln (optional)
-
-Reports auf dem eigenen Rechner erzeugen:
-
-### 1) Virtualenv und Abhängigkeiten
+## Lokal (optional)
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 python -m pip install -U pip
 python -m pip install -r requirements.txt
-```
-
-### 2) Umgebungsvariablen
-
-```bash
 cp .env.example .env
-# .env bearbeiten — ISTA_EMAIL und ISTA_PASSWORD setzen
+# .env bearbeiten: ISTA_EMAIL und ISTA_PASSWORD
 set -a && source .env && set +a
-```
-
-### 3) Report erstellen
-
-```bash
 python -m src.pipeline.report
 ```
 
-### Tests
+| Variable | Zweck |
+|----------|-------|
+| `ISTA_EMAIL`, `ISTA_PASSWORD` | ISTA-Login für Live-API |
 
 ```bash
 python -m pytest -q
 ```
 
-## Umgebungsvariablen (nur lokal)
-
-| Variable | Zweck |
-|----------|--------|
-| `ISTA_EMAIL`, `ISTA_PASSWORD` | ISTA-Login (Live-API) |
-
 ## Sicherheit
 
-- Niemals **`/.env`** oder Zugangsdaten in versionierten Dateien committen.
-- ISTA-Passwort sofort rotieren, wenn es je geleakt wurde.
-- Repo **privat** nutzen, damit Verbrauchsdaten nicht öffentlich sind.
+- Niemals `.env` oder Zugangsdaten versionieren.
+- ISTA-Passwort rotieren, falls es geleakt sein könnte.
+- **Privates** Repository, wenn Verbrauchsdaten nicht öffentlich sein sollen.

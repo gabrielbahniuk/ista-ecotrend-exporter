@@ -25,7 +25,7 @@ def _open_report_heading(*, label: str) -> str:
 def _build_block_en(generated_at: str) -> str:
     return (
         f"{MARKER_BEGIN}\n"
-        f'{_open_report_heading(label="Open Report")}\n'
+        f'{_open_report_heading(label="Open Latest Report →")}\n'
         f'<p align="center"><sup>Last updated · {generated_at}</sup></p>\n'
         f"{MARKER_END}"
     )
@@ -34,7 +34,7 @@ def _build_block_en(generated_at: str) -> str:
 def _build_block_de(generated_at: str) -> str:
     return (
         f"{MARKER_BEGIN}\n"
-        f'{_open_report_heading(label="Report öffnen")}\n'
+        f'{_open_report_heading(label="Neuesten Report öffnen →")}\n'
         f'<p align="center"><sup>Zuletzt erstellt · {generated_at}</sup></p>\n'
         f"{MARKER_END}"
     )
